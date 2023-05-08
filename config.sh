@@ -15,4 +15,17 @@ docker exec -it kafka-kafaka-1 bash
 #partition
 #name
 
+#criado o tópico
 kafka-topics --create --topic=teste --bootstrap-server=localhost:9092 --partitions=3
+
+#descrevendo o tópico
+kafka-topics --topic=teste --bootstrap-server=localhost:9092 --describe
+
+#criando o consumidor
+kafka-console-consumer --bootstrap-server=localhost:9092 --topic=teste
+
+#produtor
+kafka-console-producer --bootstrap-server=localhost:9092 --topic=teste
+
+#criando o consumidor e lendo desde o começo as mensagens
+kafka-console-consumer --bootstrap-server=localhost:9092 --topic=teste --from-beginning
