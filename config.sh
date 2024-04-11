@@ -44,3 +44,7 @@ kafka-console-consumer --bootstrap-server=localhost:9092 --topic=teste --from-be
 
 #Consumer Groups
 kafka-console-consumer --bootstrap-server=localhost:9092 --topic=teste group=x
+
+#Descrição dos consumers
+kafka-consumer-groups --bootstrap-server=localhost:9092 --group=x --describe
+
