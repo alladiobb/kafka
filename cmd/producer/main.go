@@ -23,7 +23,6 @@ func main() {
 	}
 
 	producer.Flush(1000)
-
 }
 
 func NewKafkaProducer() *kafka.Producer {
