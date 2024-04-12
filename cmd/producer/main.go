@@ -11,6 +11,10 @@ func main() {
 	//chan é um canal que o
 	deliveryChannel := make(chan kafka.Event)
 	producer := NewKafkaProducer()
+
+	// Essa linha da "KEY" Não deixa mandar para outras partições. No caso não vai ter problema da ordem de envio
+	// key := []byte("transferência")
+
 	Publish("mensagem", "test", producer, nil, deliveryChannel)
 	// Joga em uma thread de forma assincrona
 	go DeliveryReport(deliveryChannel)
@@ -23,7 +27,7 @@ func main() {
 	// 	fmt.Println("Mensagem Enviada", msg_return.TopicPartition)
 	// }
 
-	// producer.Flush(1000)
+	producer.Flush(1000)
 }
 
 func NewKafkaProducer() *kafka.Producer {
