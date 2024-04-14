@@ -33,7 +33,7 @@ kafka-topics --topic=teste --bootstrap-server=localhost:9092 --describe
 #         Topic: teste    Partition: 2    Leader: 1       Replicas: 1     Isr: 1
 
 
-#criando o consumidor
+#Ouvindo o consumidor
 kafka-console-consumer --bootstrap-server=localhost:9092 --topic=teste
 
 #produtor
