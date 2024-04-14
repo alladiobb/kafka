@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
-	//chan é um canal que o
+
+	//chan é um canal que o Kafka usa para pegar o retorno
 	deliveryChannel := make(chan kafka.Event)
+
 	producer := NewKafkaProducer()
 
 	// Essa linha da "KEY" Não deixa mandar para outras partições. No caso não vai ter problema da ordem de envio
