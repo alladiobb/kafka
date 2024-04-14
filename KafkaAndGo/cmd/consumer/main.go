@@ -8,24 +8,23 @@ import (
 
 func main() {
 	configMap := &kafka.ConfigMap{
-		"bootstrap.servers": "kafka-kafka-1:9092",
-		"client.id":         "goapp-consumer",
-		"grouip.id":         "goapp-group",
+		"bootstrap.servers": "kafkaandgo-kafka-1:9092",
+		"client.id":         "goapp2-consumer",
+		"group.id":          "goapp-group",
 		"auto.offset.reset": "earliest",
 	}
 
-	c, err := kafka.NewConsumer(configMap)
+	consumer, err := kafka.NewConsumer(configMap)
 
 	if err != nil {
 		fmt.Println("error Consumer", err.Error())
 	}
 	topics := []string{"teste"}
-	c.SubscribeTopics(topics, nil)
+	consumer.SubscribeTopics(topics, nil)
 	for {
-		msg, err := c.ReadMessage(-1)
+		mensagem, err := consumer.ReadMessage(-1)
 		if err == nil {
-			fmt.Println(string(msg.Value), msg.TopicPartition)
+			fmt.Println(string(mensagem.Value), mensagem.TopicPartition)
 		}
 	}
-
 }
