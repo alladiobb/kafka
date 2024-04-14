@@ -17,7 +17,7 @@ func main() {
 	// Essa linha da "KEY" Não deixa mandar para outras partições. No caso não vai ter problema da ordem de envio
 	// key := []byte("1")
 
-	Publish("mensagem", "teste", producer, nil, deliveryChannel)
+	Publish("mensagem", "teste", producer, []byte("05"), deliveryChannel)
 
 	//Forma Sincrona:
 	// e := <-deliveryChannel
@@ -35,7 +35,7 @@ func main() {
 	// Joga em uma thread de forma assincrona em outra thread - Não trava o terminal
 	go DeliveryReport(deliveryChannel)
 
-	producer.Flush(1000)
+	producer.Flush(2000)
 }
 
 func NewKafkaProducer() *kafka.Producer {
