@@ -15,29 +15,39 @@ func main() {
 	producer := NewKafkaProducer()
 
 	// Essa linha da "KEY" Não deixa mandar para outras partições. No caso não vai ter problema da ordem de envio
-	key := []byte("testees")
+	// key := []byte("1")
 
-	Publish("mensagem", "teste", producer, key, deliveryChannel)
-	// Joga em uma thread de forma assincrona
-	go DeliveryReport(deliveryChannel)
+	Publish("mensagem", "teste", producer, nil, deliveryChannel)
+
+	//Forma Sincrona:
 	// e := <-deliveryChannel
 	// msg_return := e.(*kafka.Message)
 
 	// if msg_return.TopicPartition.Error != nil {
 	// 	fmt.Println("Error ao enviar msg!")
 	// } else {
-	// 	fmt.Println("Mensagem Enviada", msg_return.TopicPartition)
+	// 	fmt.Println("Mensagem Enviada Sincrona: ", msg_return.TopicPartition)
 	// }
+
+	// Joga em uma thread de forma assincrona - Trava o terminal
+	// DeliveryReport(deliveryChannel)
+
+	// Joga em uma thread de forma assincrona em outra thread - Não trava o terminal
+	go DeliveryReport(deliveryChannel)
 
 	producer.Flush(1000)
 }
 
 func NewKafkaProducer() *kafka.Producer {
 	configMap := &kafka.ConfigMap{
-		"bootstrap.servers":   "kafka-kafka-1:9092",
+		"bootstrap.servers":   "kafkaandgo-kafka-1:9092",
 		"delivery.timeout.ms": "0",
 		"acks":                "all",
-		"enable.idempotence":  "true",
+		//"all" -> aguardar todos os sync brokers receberem as msg
+		//"0" -> sem retorno
+		//"1" ->
+		"enable.idempotence": "true",
+		//"true" -> Certeza que a mensagem for entregue apenas uma vez
 	}
 
 	p, err := kafka.NewProducer(configMap)
@@ -54,6 +64,15 @@ func Publish(msg string, topic string, producer *kafka.Producer, key []byte, del
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
 		Key:            key,
 	}
+
+	// Sem usar o DeliveryChannel
+	// err := producer.Produce(message, nil)
+	// if err != nil {
+	// 	return err
+	// }
+	// return nil
+
+	//Usando o DeliveryChannel
 	err := producer.Produce(message, deliveryChannel)
 	if err != nil {
 		return err
@@ -66,9 +85,10 @@ func DeliveryReport(deliveryChannel chan kafka.Event) {
 		switch ev := e.(type) {
 		case *kafka.Message:
 			if ev.TopicPartition.Error != nil {
-				fmt.Println("Error ao enviar msg!")
+				fmt.Println("Error ao enviar msg Assincrona!")
 			} else {
-				fmt.Println("Mensagem Enviada", ev.TopicPartition)
+				fmt.Println("Mensagem Assincrona Enviada: ", ev.TopicPartition)
+				//Criar logs no sistema
 			}
 		}
 	}
